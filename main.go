@@ -72,39 +72,75 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string) {
 	}
 }
 
-func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
-	var query struct {
-		Viewer struct {
-			Repositories struct {
-				TotalCount int
-				Nodes      []struct {
-					NameWithOwner string
-					Languages     struct {
-						Edges []struct {
-							Node struct {
-								Name string
-							}
-							Size int
+type queryFirstRepos struct {
+	Viewer struct {
+		Repositories struct {
+			TotalCount int
+			Nodes      []struct {
+				NameWithOwner string
+				Languages     struct {
+					Edges []struct {
+						Node struct {
+							Name string
 						}
-					} `graphql:"languages(first : 100)"`
-				}
-				PageInfo struct {
-					StartCursor string
-					EndCursor   string
-					HasNextPage bool
-				}
-			} `graphql:"repositories(first: 100)"`
-		}
-		RateLimit struct {
-			Limit     int
-			Cost      int
-			Remaining int
-			ResetAt   string
-		}
+						Size int
+					}
+				} `graphql:"languages(first : 100)"`
+			}
+			PageInfo struct {
+				StartCursor string
+				EndCursor   string
+				HasNextPage bool
+			}
+		} `graphql:"repositories(first: 1)"`
 	}
+	RateLimit struct {
+		Limit     int
+		Cost      int
+		Remaining int
+		ResetAt   string
+	}
+}
 
+type queryNextRepos struct {
+	Viewer struct {
+		Repositories struct {
+			TotalCount int
+			Nodes      []struct {
+				NameWithOwner string
+				Languages     struct {
+					Edges []struct {
+						Node struct {
+							Name string
+						}
+						Size int
+					}
+				} `graphql:"languages(first : 100)"`
+			}
+			PageInfo struct {
+				StartCursor string
+				EndCursor   string
+				HasNextPage bool
+			}
+		} `graphql:"repositories(first: 1, after: $after)"`
+	}
+	RateLimit struct {
+		Limit     int
+		Cost      int
+		Remaining int
+		ResetAt   string
+	}
+}
+
+func printRequestDetails(totalCount int, currentAmount int,
+	rateLimitRemaining int, rateLimitLimit int) {
+	fmt.Printf("Progress: %d/%d repositories (rate limit %d/%d)\n", currentAmount,
+		totalCount, rateLimitLimit-rateLimitRemaining, rateLimitLimit)
+}
+
+func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
+	query := queryFirstRepos{}
 	err := client.Query(context.Background(), &query, nil)
-
 	if err != nil {
 		return &[]repoEntry{}, err
 	}
@@ -121,53 +157,27 @@ func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
 		*repos = append(*repos, e)
 	}
 
-	fmt.Printf("Found %d repositories\n", query.Viewer.Repositories.TotalCount)
-	fmt.Printf("Rate limit: %d/%d\n",
-		query.RateLimit.Limit-query.RateLimit.Remaining, query.RateLimit.Limit)
+	printRequestDetails(
+		query.Viewer.Repositories.TotalCount,
+		len(query.Viewer.Repositories.Nodes),
+		query.RateLimit.Remaining,
+		query.RateLimit.Limit,
+	)
 
 	if query.Viewer.Repositories.PageInfo.HasNextPage {
-		getNextRepos(client, repos, query.Viewer.Repositories.PageInfo.EndCursor)
+		getNextRepos(client, repos, query.Viewer.Repositories.PageInfo.EndCursor,
+			len(query.Viewer.Repositories.Nodes))
 	}
 
 	return repos, nil
 }
 
-func getNextRepos(client *githubv4.Client, repos *[]repoEntry, offset string) error {
-	var query struct {
-		Viewer struct {
-			Repositories struct {
-				TotalCount int
-				Nodes      []struct {
-					NameWithOwner string
-					Languages     struct {
-						Edges []struct {
-							Node struct {
-								Name string
-							}
-							Size int
-						}
-					} `graphql:"languages(first : 100)"`
-				}
-				PageInfo struct {
-					StartCursor string
-					EndCursor   string
-					HasNextPage bool
-				}
-			} `graphql:"repositories(first: 100, after: $after)"`
-		}
-		RateLimit struct {
-			Limit     int
-			Cost      int
-			Remaining int
-			ResetAt   string
-		}
-	}
-
+func getNextRepos(client *githubv4.Client, repos *[]repoEntry, offset string, progress int) error {
+	query := queryNextRepos{}
 	params := map[string]interface{}{
 		"after": githubv4.String(offset),
 	}
 	err := client.Query(context.Background(), &query, params)
-
 	if err != nil {
 		return err
 	}
@@ -175,7 +185,6 @@ func getNextRepos(client *githubv4.Client, repos *[]repoEntry, offset string) er
 	if repos == nil {
 		repos = &[]repoEntry{}
 	}
-
 	for _, repo := range query.Viewer.Repositories.Nodes {
 		e := repoEntry{
 			nameWithOwner: repo.NameWithOwner,
@@ -187,11 +196,15 @@ func getNextRepos(client *githubv4.Client, repos *[]repoEntry, offset string) er
 		*repos = append(*repos, e)
 	}
 
-	fmt.Printf("Rate limit: %d/%d\n",
-		query.RateLimit.Limit-query.RateLimit.Remaining, query.RateLimit.Limit)
+	printRequestDetails(
+		query.Viewer.Repositories.TotalCount,
+		progress+len(query.Viewer.Repositories.Nodes),
+		query.RateLimit.Remaining,
+		query.RateLimit.Limit,
+	)
 
 	if query.Viewer.Repositories.PageInfo.HasNextPage {
-		getNextRepos(client, repos, query.Viewer.Repositories.PageInfo.EndCursor)
+		getNextRepos(client, repos, query.Viewer.Repositories.PageInfo.EndCursor, progress+len(query.Viewer.Repositories.Nodes))
 	}
 
 	return nil
