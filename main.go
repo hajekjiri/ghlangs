@@ -92,7 +92,7 @@ type queryFirstRepos struct {
 				EndCursor   string
 				HasNextPage bool
 			}
-		} `graphql:"repositories(first: 1)"`
+		} `graphql:"repositories(first: 100, affiliations: OWNER)"`
 	}
 	RateLimit struct {
 		Limit     int
@@ -122,7 +122,7 @@ type queryNextRepos struct {
 				EndCursor   string
 				HasNextPage bool
 			}
-		} `graphql:"repositories(first: 1, after: $after)"`
+		} `graphql:"repositories(first: 100, affiliations: OWNER, after: $after)"`
 	}
 	RateLimit struct {
 		Limit     int
