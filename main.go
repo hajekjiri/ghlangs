@@ -308,12 +308,6 @@ type queryNextRepos struct {
 	}
 }
 
-func printRequestDetails(totalCount int, currentAmount int,
-	rateLimitRemaining int, rateLimitLimit int) {
-	fmt.Printf("Progress: %d/%d repositories (API Rate Limit %d/%d)\n", currentAmount,
-		totalCount, rateLimitLimit-rateLimitRemaining, rateLimitLimit)
-}
-
 func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
 	query := queryFirstRepos{}
 	err := client.Query(context.Background(), &query, nil)
@@ -333,10 +327,11 @@ func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
 		*repos = append(*repos, e)
 	}
 
-	printRequestDetails(
-		query.Viewer.Repositories.TotalCount,
+	fmt.Printf(
+		"Progress: %d/%d repositories (API Rate Limit %d/%d)\n",
 		len(query.Viewer.Repositories.Nodes),
-		query.RateLimit.Remaining,
+		query.Viewer.Repositories.TotalCount,
+		query.RateLimit.Limit-query.RateLimit.Remaining,
 		query.RateLimit.Limit,
 	)
 
@@ -372,10 +367,11 @@ func getNextRepos(client *githubv4.Client, repos *[]repoEntry, offset string, pr
 		*repos = append(*repos, e)
 	}
 
-	printRequestDetails(
-		query.Viewer.Repositories.TotalCount,
+	fmt.Printf(
+		"Progress: %d/%d repositories (API Rate Limit %d/%d)\n",
 		progress+len(query.Viewer.Repositories.Nodes),
-		query.RateLimit.Remaining,
+		query.Viewer.Repositories.TotalCount,
+		query.RateLimit.Limit-query.RateLimit.Remaining,
 		query.RateLimit.Limit,
 	)
 
