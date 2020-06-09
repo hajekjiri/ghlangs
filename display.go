@@ -77,7 +77,7 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 	}
 
 	totalSizeLabel := "Total size"
-	totalSizeString := getSizeByUnit(totalSize, unit)
+	totalSizeString := GetSizeByUnit(totalSize, unit)
 	maxNameLen := len(totalSizeLabel)
 	maxSizeLen := len(totalSizeString)
 	for _, lang := range langs {
@@ -85,7 +85,7 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 			maxNameLen = len(lang.name)
 		}
 
-		langSizeLen := len(getSizeByUnit(lang.bytes, unit))
+		langSizeLen := len(GetSizeByUnit(lang.bytes, unit))
 		if langSizeLen > maxSizeLen {
 			maxSizeLen = langSizeLen
 		}
@@ -106,7 +106,7 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 		fmt.Printf(
 			"|%s|%s|%s%%|\n",
 			Strrpad(lang.name, maxNameLen),
-			Strlpad(getSizeByUnit(lang.bytes, unit), maxSizeLen),
+			Strlpad(GetSizeByUnit(lang.bytes, unit), maxSizeLen),
 			Strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
 		)
 	}
