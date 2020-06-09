@@ -37,10 +37,10 @@ type repoEntry struct {
 
 func listReposWithLanguages(repos *[]repoEntry, unit string) {
 	for i, repo := range *repos {
-		fmt.Printf("Repository %s contains\n", repo.nameWithOwner)
-		for _, lang := range repo.langs {
-			fmt.Printf("%s of %s\n", getSizeByUnit(lang.bytes, unit), lang.name)
-		}
+		fmt.Printf("%s\n", repo.nameWithOwner)
+
+		listLanguages(&repo.langs, "bytes", "descending", unit)
+
 		if i < len(*repos)-1 {
 			fmt.Println()
 		}
@@ -116,25 +116,45 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 	}
 
 	totalSize := 0
-	maxStrLen := len("Total size:")
 	for _, lang := range *langs {
 		totalSize += lang.bytes
+	}
 
-		if len(lang.name) > maxStrLen {
-			maxStrLen = len(lang.name)
+	totalSizeLabel := "Total size"
+	totalSizeString := getSizeByUnit(totalSize, unit)
+	maxNameLen := len(totalSizeLabel)
+	maxSizeLen := len(totalSizeString)
+	for _, lang := range *langs {
+		if len(lang.name) > maxNameLen {
+			maxNameLen = len(lang.name)
+		}
+
+		langSizeLen := len(getSizeByUnit(lang.bytes, unit))
+		if langSizeLen > maxSizeLen {
+			maxSizeLen = langSizeLen
 		}
 	}
 
-	totalSizeString := getSizeByUnit(totalSize, unit)
-	fmt.Printf("Total size: %s\n", totalSizeString)
+	dashes := make([]byte, len(totalSizeLabel)+maxSizeLen+11)
+	for i := range dashes {
+		dashes[i] = '-'
+	}
+	dashesStr := string(dashes)
+
+	fmt.Println(dashesStr)
+	fmt.Printf("|%s|%s|100.00%%|\n", totalSizeLabel, strlpad(totalSizeString, maxSizeLen))
+	fmt.Println(dashesStr)
 
 	for _, lang := range *langs {
+		relativeSize := float64(lang.bytes) / float64(totalSize) * 100
 		fmt.Printf(
-			"%s %s\n",
-			strrpad(lang.name, maxStrLen),
-			strlpad(getSizeByUnit(lang.bytes, unit), len(totalSizeString)),
+			"|%s|%s|%s%%|\n",
+			strrpad(lang.name, maxNameLen),
+			strlpad(getSizeByUnit(lang.bytes, unit), maxSizeLen),
+			strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
 		)
 	}
+	fmt.Println(dashesStr)
 }
 
 func strlpad(str string, pad int) string {
@@ -189,7 +209,7 @@ func getSizeByUnit(size int, unit string) string {
 	// no need for more units because 10^18 approaches the limits of 64bit integers
 	default:
 		log.Printf("Warning: unknown unit '%s' in getSizeByUnit(), defaulting to B\n", unit)
-		unit = "B"
+		unit = " B"
 		exp = 1
 	}
 
@@ -207,7 +227,7 @@ func getAutoSize(size int) string {
 
 	switch unitNo {
 	case 0:
-		unit = "B"
+		unit = " B"
 	case 1:
 		unit = "kB"
 	case 2:
@@ -290,7 +310,7 @@ type queryNextRepos struct {
 
 func printRequestDetails(totalCount int, currentAmount int,
 	rateLimitRemaining int, rateLimitLimit int) {
-	fmt.Printf("Progress: %d/%d repositories (rate limit %d/%d)\n", currentAmount,
+	fmt.Printf("Progress: %d/%d repositories (API Rate Limit %d/%d)\n", currentAmount,
 		totalCount, rateLimitLimit-rateLimitRemaining, rateLimitLimit)
 }
 
@@ -385,5 +405,6 @@ func main() {
 	langs := getLanguagesFromRepos(repos)
 	listReposWithLanguages(repos, unit)
 	fmt.Println()
+	fmt.Println("All repositories:")
 	listLanguages(langs, sortKey, sortDirection, unit)
 }
