@@ -35,11 +35,11 @@ type repoEntry struct {
 	langs         []langEntry
 }
 
-func listReposWithLanguages(repos *[]repoEntry) {
+func listReposWithLanguages(repos *[]repoEntry, unit string) {
 	for i, repo := range *repos {
 		fmt.Printf("Repository %s contains\n", repo.nameWithOwner)
 		for _, lang := range repo.langs {
-			fmt.Printf("%d B of %s\n", lang.bytes, lang.name)
+			fmt.Printf("%s of %s\n", getSizeByUnit(lang.bytes, unit), lang.name)
 		}
 		if i < len(*repos)-1 {
 			fmt.Println()
@@ -120,7 +120,7 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 		totalSize += lang.bytes
 	}
 
-	totalSizeString := getAutoSize(totalSize)
+	totalSizeString := getSizeByUnit(totalSize, unit)
 	fmt.Printf("Total size: %s\n", totalSizeString)
 
 	for _, lang := range *langs {
@@ -339,11 +339,12 @@ func main() {
 		log.Fatal(fmt.Sprintf("Error: %s", err))
 	}
 
-	langs := getLanguagesFromRepos(repos)
-	listReposWithLanguages(repos)
-	fmt.Println()
 	sortKey := "bytes"
 	sortDirection := "descending"
 	unit := "auto"
+
+	langs := getLanguagesFromRepos(repos)
+	listReposWithLanguages(repos, unit)
+	fmt.Println()
 	listLanguages(langs, sortKey, sortDirection, unit)
 }
