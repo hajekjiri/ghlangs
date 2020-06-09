@@ -66,14 +66,14 @@ type queryNextRepos struct {
 	}
 }
 
-func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
+func getRepos(client *githubv4.Client) ([]repoEntry, error) {
 	query := queryFirstRepos{}
 	err := client.Query(context.Background(), &query, nil)
 	if err != nil {
-		return &[]repoEntry{}, err
+		return []repoEntry{}, err
 	}
 
-	repos := &[]repoEntry{}
+	repos := []repoEntry{}
 	for _, repo := range query.Viewer.Repositories.Nodes {
 		e := repoEntry{
 			nameWithOwner: repo.NameWithOwner,
@@ -82,7 +82,7 @@ func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
 		for _, lang := range repo.Languages.Edges {
 			e.langs = append(e.langs, langEntry{lang.Node.Name, lang.Size})
 		}
-		*repos = append(*repos, e)
+		repos = append(repos, e)
 	}
 
 	fmt.Printf(
@@ -94,7 +94,7 @@ func getRepos(client *githubv4.Client) (*[]repoEntry, error) {
 	)
 
 	if query.Viewer.Repositories.PageInfo.HasNextPage {
-		getNextRepos(client, repos, query.Viewer.Repositories.PageInfo.EndCursor,
+		getNextRepos(client, &repos, query.Viewer.Repositories.PageInfo.EndCursor,
 			len(query.Viewer.Repositories.Nodes))
 	}
 

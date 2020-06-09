@@ -7,30 +7,30 @@ import (
 	"strings"
 )
 
-func listReposWithLanguages(repos *[]repoEntry, unit string) {
-	for i, repo := range *repos {
+func listReposWithLanguages(repos []repoEntry, unit string) {
+	for i, repo := range repos {
 		fmt.Printf("%s\n", repo.nameWithOwner)
 
-		listLanguages(&repo.langs, "bytes", "descending", unit)
+		listLanguages(repo.langs, "bytes", "descending", unit)
 
-		if i < len(*repos)-1 {
+		if i < len(repos)-1 {
 			fmt.Println()
 		}
 	}
 }
 
-func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, unit string) {
+func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit string) {
 	var sortFunc func(a, b int) bool
 	switch sortKey {
 	case "name":
 		switch sortDirection {
 		case "ascending":
 			sortFunc = func(a, b int) bool {
-				return strings.Compare((*langs)[a].name, (*langs)[b].name) < 0
+				return strings.Compare(langs[a].name, langs[b].name) < 0
 			}
 		case "descending":
 			sortFunc = func(a, b int) bool {
-				return strings.Compare((*langs)[a].name, (*langs)[b].name) > 0
+				return strings.Compare(langs[a].name, langs[b].name) > 0
 			}
 		default:
 			log.Printf(
@@ -38,18 +38,18 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 				sortDirection,
 			)
 			sortFunc = func(a, b int) bool {
-				return strings.Compare((*langs)[a].name, (*langs)[b].name) < 0
+				return strings.Compare(langs[a].name, langs[b].name) < 0
 			}
 		}
 	case "bytes":
 		switch sortDirection {
 		case "ascending":
 			sortFunc = func(a, b int) bool {
-				return (*langs)[a].bytes < (*langs)[b].bytes
+				return langs[a].bytes < langs[b].bytes
 			}
 		case "descending":
 			sortFunc = func(a, b int) bool {
-				return (*langs)[a].bytes > (*langs)[b].bytes
+				return langs[a].bytes > langs[b].bytes
 			}
 		default:
 			log.Printf(
@@ -57,7 +57,7 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 				sortDirection,
 			)
 			sortFunc = func(a, b int) bool {
-				return (*langs)[a].bytes > (*langs)[b].bytes
+				return langs[a].bytes > langs[b].bytes
 			}
 		}
 	case "":
@@ -68,11 +68,11 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 	}
 
 	if sortFunc != nil {
-		sort.Slice(*langs, sortFunc)
+		sort.Slice(langs, sortFunc)
 	}
 
 	totalSize := 0
-	for _, lang := range *langs {
+	for _, lang := range langs {
 		totalSize += lang.bytes
 	}
 
@@ -80,7 +80,7 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 	totalSizeString := getSizeByUnit(totalSize, unit)
 	maxNameLen := len(totalSizeLabel)
 	maxSizeLen := len(totalSizeString)
-	for _, lang := range *langs {
+	for _, lang := range langs {
 		if len(lang.name) > maxNameLen {
 			maxNameLen = len(lang.name)
 		}
@@ -101,7 +101,7 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 	fmt.Printf("|%s|%s|100.00%%|\n", totalSizeLabel, Strlpad(totalSizeString, maxSizeLen))
 	fmt.Println(dashesStr)
 
-	for _, lang := range *langs {
+	for _, lang := range langs {
 		relativeSize := float64(lang.bytes) / float64(totalSize) * 100
 		fmt.Printf(
 			"|%s|%s|%s%%|\n",
