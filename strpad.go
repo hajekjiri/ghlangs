@@ -1,31 +1,48 @@
 package main
 
-func strlpad(str string, pad int) string {
-	if pad <= len(str) {
-		return string(str)
+import (
+	"fmt"
+	"log"
+)
+
+// Strlpad pads a string on the left side by padLen
+func Strlpad(str string, padLen int) string {
+	result, err := strpad(str, padLen, "left")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error: %s", err))
 	}
 
-	whitespace := make([]byte, pad-len(str))
-	for i := range whitespace {
-		whitespace[i] = ' '
-	}
-
-	bytes := []byte(str)
-	bytes = append(whitespace, bytes...)
-	return string(bytes)
+	return result
 }
 
-func strrpad(str string, pad int) string {
-	if pad <= len(str) {
-		return string(str)
+// Strrpad pads a string on the left side by padLen
+func Strrpad(str string, padLen int) string {
+	result, err := strpad(str, padLen, "right")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error: %s", err))
 	}
 
-	whitespace := make([]byte, pad-len(str))
+	return result
+}
+
+func strpad(str string, padLen int, padDirection string) (string, error) {
+	if padLen <= len(str) {
+		return string(str), nil
+	}
+
+	whitespace := make([]byte, padLen-len(str))
 	for i := range whitespace {
 		whitespace[i] = ' '
 	}
 
 	bytes := []byte(str)
-	bytes = append(bytes, whitespace...)
-	return string(bytes)
+	switch padDirection {
+	case "left":
+		bytes = append(whitespace, bytes...)
+	case "right":
+		bytes = append(bytes, whitespace...)
+	default:
+		return str, fmt.Errorf("strpad(): invalid pad direction '%s'", padDirection)
+	}
+	return string(bytes), nil
 }

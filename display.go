@@ -98,16 +98,16 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 	dashesStr := string(dashes)
 
 	fmt.Println(dashesStr)
-	fmt.Printf("|%s|%s|100.00%%|\n", totalSizeLabel, strlpad(totalSizeString, maxSizeLen))
+	fmt.Printf("|%s|%s|100.00%%|\n", totalSizeLabel, Strlpad(totalSizeString, maxSizeLen))
 	fmt.Println(dashesStr)
 
 	for _, lang := range *langs {
 		relativeSize := float64(lang.bytes) / float64(totalSize) * 100
 		fmt.Printf(
 			"|%s|%s|%s%%|\n",
-			strrpad(lang.name, maxNameLen),
-			strlpad(getSizeByUnit(lang.bytes, unit), maxSizeLen),
-			strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
+			Strrpad(lang.name, maxNameLen),
+			Strlpad(getSizeByUnit(lang.bytes, unit), maxSizeLen),
+			Strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
 		)
 	}
 	fmt.Println(dashesStr)
