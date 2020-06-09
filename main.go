@@ -116,16 +116,55 @@ func listLanguages(langs *[]langEntry, sortKey string, sortDirection string, uni
 	}
 
 	totalSize := 0
+	maxStrLen := len("Total size:")
 	for _, lang := range *langs {
 		totalSize += lang.bytes
+
+		if len(lang.name) > maxStrLen {
+			maxStrLen = len(lang.name)
+		}
 	}
 
 	totalSizeString := getSizeByUnit(totalSize, unit)
 	fmt.Printf("Total size: %s\n", totalSizeString)
 
 	for _, lang := range *langs {
-		fmt.Printf("%s: %s\n", lang.name, getSizeByUnit(lang.bytes, unit))
+		fmt.Printf(
+			"%s %s\n",
+			strrpad(lang.name, maxStrLen),
+			strlpad(getSizeByUnit(lang.bytes, unit), len(totalSizeString)),
+		)
 	}
+}
+
+func strlpad(str string, pad int) string {
+	if pad < len(str) {
+		return string(str)
+	}
+
+	whitespace := make([]byte, pad-len(str))
+	for i := range whitespace {
+		whitespace[i] = ' '
+	}
+
+	bytes := []byte(str)
+	bytes = append(whitespace, bytes...)
+	return string(bytes)
+}
+
+func strrpad(str string, pad int) string {
+	if pad < len(str) {
+		return string(str)
+	}
+
+	whitespace := make([]byte, pad-len(str))
+	for i := range whitespace {
+		whitespace[i] = ' '
+	}
+
+	bytes := []byte(str)
+	bytes = append(bytes, whitespace...)
+	return string(bytes)
 }
 
 func getSizeByUnit(size int, unit string) string {
@@ -154,7 +193,7 @@ func getSizeByUnit(size int, unit string) string {
 		exp = 1
 	}
 
-	return fmt.Sprintf("%f %s", float64(size)*math.Pow10(exp), unit)
+	return fmt.Sprintf("%.3f %s", float64(size)*math.Pow10(exp), unit)
 }
 
 func getAutoSize(size int) string {
@@ -186,7 +225,7 @@ func getAutoSize(size int) string {
 		log.Fatal("Error in getAutoSize(): this shouldn't have happened because 64bit integers can't reach sizes larger than ~10^18")
 	}
 
-	return fmt.Sprintf("%f %s", sizeFloat, unit)
+	return fmt.Sprintf("%.3f %s", sizeFloat, unit)
 }
 
 type queryFirstRepos struct {
