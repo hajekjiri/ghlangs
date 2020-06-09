@@ -1,7 +1,7 @@
 package main
 
 func strlpad(str string, pad int) string {
-	if pad < len(str) {
+	if pad <= len(str) {
 		return string(str)
 	}
 
@@ -16,7 +16,7 @@ func strlpad(str string, pad int) string {
 }
 
 func strrpad(str string, pad int) string {
-	if pad < len(str) {
+	if pad <= len(str) {
 		return string(str)
 	}
 
