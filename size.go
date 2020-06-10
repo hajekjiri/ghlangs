@@ -23,7 +23,7 @@ func GetSizeByUnit(size int, unit string) (string, error) {
 		}
 		return result, nil
 	case "B":
-		exp = 1
+		exp = 0
 	case "kB":
 		exp = -3
 	case "MB":
@@ -41,12 +41,18 @@ func GetSizeByUnit(size int, unit string) (string, error) {
 		return "", fmt.Errorf("GetSizeByUnit(): unknown unit %q", unit)
 	}
 
+	if unit == "B" {
+		unit = " B"
+	}
+
 	return fmt.Sprintf("%.3f %s", float64(size)*math.Pow10(exp), unit), nil
 }
 
 // GetSizeAuto converts bytes to a unit such that the resulting number will be
-// between 1 (inclusive) and 1000 (exclusive). Returns a string composed of a size
-// (float64 with 3 decimal places) and the corresponding unit.
+// between 1 (inclusive) and 1000 (exclusive) as long as the input size is
+// greater than zero. Returns a string composed of a size (float64 with 3
+// decimal places) and the corresponding unit. Input of size 0 will return
+// "0  B".
 func GetSizeAuto(size int) (string, error) {
 	if size < 0 {
 		return "", fmt.Errorf("GetSizeByUnit(): size cannot be less than 0")
@@ -55,7 +61,7 @@ func GetSizeAuto(size int) (string, error) {
 	unitNo := 0
 	var unit string
 	sizeFloat := float64(size)
-	for sizeFloat > 1000 {
+	for sizeFloat >= 1000 {
 		sizeFloat = sizeFloat / 1000
 		unitNo++
 	}
