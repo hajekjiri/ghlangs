@@ -77,7 +77,10 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 	}
 
 	totalSizeLabel := "Total size"
-	totalSizeString := GetSizeByUnit(totalSize, unit)
+	totalSizeString, err := GetSizeByUnit(totalSize, unit)
+	if err != nil {
+		log.Fatalf("Error: %s\n", err)
+	}
 	maxNameLen := len(totalSizeLabel)
 	maxSizeLen := len(totalSizeString)
 	for _, lang := range langs {
@@ -85,7 +88,11 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 			maxNameLen = len(lang.name)
 		}
 
-		langSizeLen := len(GetSizeByUnit(lang.bytes, unit))
+		langSize, err := GetSizeByUnit(lang.bytes, unit)
+		if err != nil {
+			log.Fatalf("Error: %s\n", err)
+		}
+		langSizeLen := len(langSize)
 		if langSizeLen > maxSizeLen {
 			maxSizeLen = langSizeLen
 		}
@@ -103,10 +110,15 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 
 	for _, lang := range langs {
 		relativeSize := float64(lang.bytes) / float64(totalSize) * 100
+		size, err := GetSizeByUnit(lang.bytes, unit)
+		if err != nil {
+			log.Fatalf("Error: %s\n", err)
+		}
+
 		fmt.Printf(
 			"|%s|%s|%s%%|\n",
 			Strrpad(lang.name, maxNameLen),
-			Strlpad(GetSizeByUnit(lang.bytes, unit), maxSizeLen),
+			Strlpad(size, maxSizeLen),
 			Strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
 		)
 	}

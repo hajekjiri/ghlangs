@@ -9,11 +9,19 @@ import (
 // GetSizeByUnit converts bytes to any other units ranging from B to EB.
 // Utilizes GetSizeAuto for the "auto" unit. Returns a string composed of
 // a size (float64 with 3 decimal places) and the corresponding unit.
-func GetSizeByUnit(size int, unit string) string {
+func GetSizeByUnit(size int, unit string) (string, error) {
+	if size < 0 {
+		return "", fmt.Errorf("GetSizeByUnit(): size cannot be less than 0")
+	}
+
 	var exp int
 	switch unit {
 	case "auto":
-		return GetSizeAuto(size)
+		result, err := GetSizeAuto(size)
+		if err != nil {
+			log.Fatalf("Error: %s\n", err)
+		}
+		return result, nil
 	case "B":
 		exp = 1
 	case "kB":
@@ -30,18 +38,20 @@ func GetSizeByUnit(size int, unit string) string {
 		exp = -18
 	// no need for more units because 10^18 approaches the limits of 64bit integers
 	default:
-		log.Printf("Warning: unknown unit '%s' in GetSizeByUnit(), defaulting to B\n", unit)
-		unit = " B"
-		exp = 1
+		return "", fmt.Errorf("GetSizeByUnit(): unknown unit %q", unit)
 	}
 
-	return fmt.Sprintf("%.3f %s", float64(size)*math.Pow10(exp), unit)
+	return fmt.Sprintf("%.3f %s", float64(size)*math.Pow10(exp), unit), nil
 }
 
 // GetSizeAuto converts bytes to a unit such that the resulting number will be
 // between 1 (inclusive) and 1000 (exclusive). Returns a string composed of a size
 // (float64 with 3 decimal places) and the corresponding unit.
-func GetSizeAuto(size int) string {
+func GetSizeAuto(size int) (string, error) {
+	if size < 0 {
+		return "", fmt.Errorf("GetSizeByUnit(): size cannot be less than 0")
+	}
+
 	unitNo := 0
 	var unit string
 	sizeFloat := float64(size)
@@ -68,8 +78,8 @@ func GetSizeAuto(size int) string {
 		unit = "EB"
 		// no need for more units because 10^18 approaches the limits of 64bit integers
 	default:
-		log.Fatal("Error in GetSizeAuto(): this shouldn't have happened because 64bit integers can't reach sizes larger than ~10^18")
+		return "", fmt.Errorf("GetSizeAuto(): size is larger than the 64bit integer limit (?)")
 	}
 
-	return fmt.Sprintf("%.3f %s", sizeFloat, unit)
+	return fmt.Sprintf("%.3f %s", sizeFloat, unit), nil
 }
