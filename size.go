@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 )
 
@@ -17,9 +16,9 @@ func GetSizeByUnit(size int, unit string) (string, error) {
 	var exp int
 	switch unit {
 	case "auto":
-		result, err := GetSizeAuto(size)
+		result, err := getSizeAuto(size)
 		if err != nil {
-			log.Fatalf("Error: %s\n", err)
+			return "", err
 		}
 		return result, nil
 	case "B":
@@ -48,16 +47,12 @@ func GetSizeByUnit(size int, unit string) (string, error) {
 	return fmt.Sprintf("%.3f %s", float64(size)*math.Pow10(exp), unit), nil
 }
 
-// GetSizeAuto converts bytes to a unit such that the resulting number will be
+// getSizeAuto converts bytes to a unit such that the resulting number will be
 // between 1 (inclusive) and 1000 (exclusive) as long as the input size is
 // greater than zero. Returns a string composed of a size (float64 with 3
 // decimal places) and the corresponding unit. Input of size 0 will return
 // "0  B".
-func GetSizeAuto(size int) (string, error) {
-	if size < 0 {
-		return "", fmt.Errorf("GetSizeByUnit(): size cannot be less than 0")
-	}
-
+func getSizeAuto(size int) (string, error) {
 	unitNo := 0
 	var unit string
 	sizeFloat := float64(size)
@@ -84,7 +79,7 @@ func GetSizeAuto(size int) (string, error) {
 		unit = "EB"
 		// no need for more units because 10^18 approaches the limits of 64bit integers
 	default:
-		return "", fmt.Errorf("GetSizeAuto(): size is larger than the 64bit integer limit (?)")
+		return "", fmt.Errorf("getSizeAuto(): size is larger than the 64bit integer limit (?)")
 	}
 
 	return fmt.Sprintf("%.3f %s", sizeFloat, unit), nil
