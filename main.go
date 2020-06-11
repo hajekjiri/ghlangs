@@ -94,13 +94,13 @@ func main() {
 
 	client, err := NewClient()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s", err)
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		return
 	}
 
 	repos, err := getRepos(client)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %s", err)
+		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		return
 	}
 
@@ -109,14 +109,14 @@ func main() {
 	case "detail":
 		err = listReposWithLanguages(repos, sortKey, sortDirection, unit)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s", err)
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			return
 		}
 	case "total":
 		fmt.Println("All repositories:")
 		err = listLanguages(langs, sortKey, sortDirection, unit)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s", err)
+			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			return
 		}
 	}
