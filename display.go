@@ -2,69 +2,60 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"strings"
 )
 
-func listReposWithLanguages(repos []repoEntry, unit string) {
+func listReposWithLanguages(repos []repoEntry, sortKey string, sortDirection string, unit string) error {
 	for i, repo := range repos {
 		fmt.Printf("%s\n", repo.nameWithOwner)
 
-		listLanguages(repo.langs, "bytes", "descending", unit)
+		err := listLanguages(repo.langs, sortKey, sortDirection, unit)
+		if err != nil {
+			return err
+		}
 
 		if i < len(repos)-1 {
 			fmt.Println()
 		}
 	}
+
+	return nil
 }
 
-func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit string) {
+func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit string) error {
 	var sortFunc func(a, b int) bool
 	switch sortKey {
 	case "name":
 		switch sortDirection {
-		case "ascending":
+		case "asc":
 			sortFunc = func(a, b int) bool {
 				return strings.Compare(langs[a].name, langs[b].name) < 0
 			}
-		case "descending":
+		case "desc":
 			sortFunc = func(a, b int) bool {
 				return strings.Compare(langs[a].name, langs[b].name) > 0
 			}
 		default:
-			log.Printf(
-				"Warning: unknown sort direction '%s' in listLanguages(), defaulting to 'ascending'\n",
-				sortDirection,
-			)
-			sortFunc = func(a, b int) bool {
-				return strings.Compare(langs[a].name, langs[b].name) < 0
-			}
+			return fmt.Errorf("listLanguages(): unknown sort direction %q in listLanguages()", sortDirection)
 		}
-	case "bytes":
+	case "size":
 		switch sortDirection {
-		case "ascending":
+		case "asc":
 			sortFunc = func(a, b int) bool {
-				return langs[a].bytes < langs[b].bytes
+				return langs[a].size < langs[b].size
 			}
-		case "descending":
+		case "desc":
 			sortFunc = func(a, b int) bool {
-				return langs[a].bytes > langs[b].bytes
+				return langs[a].size > langs[b].size
 			}
 		default:
-			log.Printf(
-				"Warning: unknown sort direction '%s' in listLanguages(), defaulting to descending\n",
-				sortDirection,
-			)
-			sortFunc = func(a, b int) bool {
-				return langs[a].bytes > langs[b].bytes
-			}
+			return fmt.Errorf("listLanguages(): unknown sort direction %q in listLanguages()", sortDirection)
 		}
 	case "":
 		sortFunc = nil
 	default:
-		log.Printf("Warning: unknown sort key '%s' in listLanguages()\n", sortKey)
-		sortFunc = nil
+		return fmt.Errorf("listLanguages(): unknown sort key %q in listLanguages()", sortKey)
 	}
 
 	if sortFunc != nil {
@@ -73,13 +64,13 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 
 	totalSize := 0
 	for _, lang := range langs {
-		totalSize += lang.bytes
+		totalSize += lang.size
 	}
 
 	totalSizeLabel := "Total size"
 	totalSizeString, err := GetSizeByUnit(totalSize, unit)
 	if err != nil {
-		log.Fatalf("Error: %s\n", err)
+		return err
 	}
 	maxNameLen := len(totalSizeLabel)
 	maxSizeLen := len(totalSizeString)
@@ -88,9 +79,9 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 			maxNameLen = len(lang.name)
 		}
 
-		langSize, err := GetSizeByUnit(lang.bytes, unit)
+		langSize, err := GetSizeByUnit(lang.size, unit)
 		if err != nil {
-			log.Fatalf("Error: %s\n", err)
+			return err
 		}
 		langSizeLen := len(langSize)
 		if langSizeLen > maxSizeLen {
@@ -109,18 +100,21 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 	fmt.Println(dashesStr)
 
 	for _, lang := range langs {
-		relativeSize := float64(lang.bytes) / float64(totalSize) * 100
-		size, err := GetSizeByUnit(lang.bytes, unit)
+		relativeSize := float64(lang.size) / float64(totalSize) * 100
+		sizeWithUnit, err := GetSizeByUnit(lang.size, unit)
 		if err != nil {
-			log.Fatalf("Error: %s\n", err)
+			return err
 		}
 
 		fmt.Printf(
 			"|%s|%s|%s%%|\n",
 			Strrpad(lang.name, maxNameLen),
-			Strlpad(size, maxSizeLen),
+			Strlpad(sizeWithUnit, maxSizeLen),
 			Strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
 		)
 	}
+
 	fmt.Println(dashesStr)
+
+	return nil
 }

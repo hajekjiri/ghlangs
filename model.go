@@ -1,8 +1,8 @@
 package main
 
 type langEntry struct {
-	name  string
-	bytes int
+	name string
+	size int
 }
 
 type repoEntry struct {
