@@ -94,8 +94,10 @@ func getRepos(client *githubv4.Client) ([]repoEntry, error) {
 	)
 
 	if query.Viewer.Repositories.PageInfo.HasNextPage {
-		getNextRepos(client, &repos, query.Viewer.Repositories.PageInfo.EndCursor,
-			len(query.Viewer.Repositories.Nodes))
+		err := getNextRepos(client, &repos, query.Viewer.Repositories.PageInfo.EndCursor, len(query.Viewer.Repositories.Nodes))
+		if err != nil {
+			return []repoEntry{}, err
+		}
 	}
 
 	return repos, nil
