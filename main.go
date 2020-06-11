@@ -95,11 +95,13 @@ func main() {
 	client, err := NewClient()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s", err)
+		return
 	}
 
 	repos, err := getRepos(client)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s", err)
+		return
 	}
 
 	langs := getLanguagesFromRepos(repos)
