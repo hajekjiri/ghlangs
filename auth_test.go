@@ -21,6 +21,6 @@ func TestValidToken(t *testing.T) {
 	err = client.Query(context.Background(), &query, nil)
 	if err != nil {
 		t.Errorf("query: %s", err)
-		t.Fail()
+		t.FailNow()
 	}
 }
