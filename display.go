@@ -6,7 +6,13 @@ import (
 	"strings"
 )
 
-func listReposWithLanguages(repos []repoEntry, sortKey string, sortOrder string, unit string) error {
+// ListReposWithLanguages lists repositories and used programming languages for
+// each of those repositories. Repositories are sorted by name in ascending
+// order and their name is displayed in the nameWithOwner format
+// (owner/repository). Sizes are displayed in the provided unit. Languages
+// are sorted based on the sortKey and sortOrder parameters. Uses ListLanguages
+// to list programming languages.
+func ListReposWithLanguages(repos []repoEntry, sortKey string, sortOrder string, unit string) error {
 	repoSortFunc := func(a, b int) bool {
 		return strings.Compare(repos[a].nameWithOwner, repos[b].nameWithOwner) < 0
 	}
@@ -15,7 +21,7 @@ func listReposWithLanguages(repos []repoEntry, sortKey string, sortOrder string,
 	for i, repo := range repos {
 		fmt.Printf("%s\n", repo.nameWithOwner)
 
-		err := listLanguages(repo.langs, sortKey, sortOrder, unit)
+		err := ListLanguages(repo.langs, sortKey, sortOrder, unit)
 		if err != nil {
 			return err
 		}
@@ -28,7 +34,10 @@ func listReposWithLanguages(repos []repoEntry, sortKey string, sortOrder string,
 	return nil
 }
 
-func listLanguages(langs []langEntry, sortKey string, sortOrder string, unit string) error {
+// ListLanguages lists programming languages and their sizes based on the
+// provided []langEntry slice. The output is sorted based on the sortKey and
+// sortOrder parameters. Sizes are displayed in the provided unit.
+func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit string) error {
 	var sortFunc func(a, b int) bool
 	switch sortKey {
 	case "name":

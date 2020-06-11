@@ -107,14 +107,14 @@ func main() {
 	langs := getLanguagesFromRepos(repos)
 	switch format {
 	case "detail":
-		err = listReposWithLanguages(repos, sortKey, sortOrder, unit)
+		err = ListReposWithLanguages(repos, sortKey, sortOrder, unit)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			return
 		}
 	case "total":
 		fmt.Println("All repositories:")
-		err = listLanguages(langs, sortKey, sortOrder, unit)
+		err = ListLanguages(langs, sortKey, sortOrder, unit)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			return
