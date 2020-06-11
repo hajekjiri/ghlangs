@@ -7,6 +7,11 @@ import (
 )
 
 func listReposWithLanguages(repos []repoEntry, sortKey string, sortDirection string, unit string) error {
+	repoSortFunc := func(a, b int) bool {
+		return strings.Compare(repos[a].nameWithOwner, repos[b].nameWithOwner) < 0
+	}
+	sort.Slice(repos, repoSortFunc)
+
 	for i, repo := range repos {
 		fmt.Printf("%s\n", repo.nameWithOwner)
 
