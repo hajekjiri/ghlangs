@@ -51,7 +51,7 @@ func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit str
 				return strings.Compare(langs[a].name, langs[b].name) > 0
 			}
 		default:
-			return fmt.Errorf("listLanguages(): unknown sort order %q in listLanguages()", sortOrder)
+			return fmt.Errorf("ListLanguages(): unknown sort order %q", sortOrder)
 		}
 	case "size":
 		switch sortOrder {
@@ -64,12 +64,12 @@ func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit str
 				return langs[a].size > langs[b].size
 			}
 		default:
-			return fmt.Errorf("listLanguages(): unknown sort order %q in listLanguages()", sortOrder)
+			return fmt.Errorf("ListLanguages(): unknown sort order %q", sortOrder)
 		}
 	case "":
 		sortFunc = nil
 	default:
-		return fmt.Errorf("listLanguages(): unknown sort key %q in listLanguages()", sortKey)
+		return fmt.Errorf("ListLanguages(): unknown sort key %q", sortKey)
 	}
 
 	if sortFunc != nil {
