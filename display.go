@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func listReposWithLanguages(repos []repoEntry, sortKey string, sortDirection string, unit string) error {
+func listReposWithLanguages(repos []repoEntry, sortKey string, sortOrder string, unit string) error {
 	repoSortFunc := func(a, b int) bool {
 		return strings.Compare(repos[a].nameWithOwner, repos[b].nameWithOwner) < 0
 	}
@@ -15,7 +15,7 @@ func listReposWithLanguages(repos []repoEntry, sortKey string, sortDirection str
 	for i, repo := range repos {
 		fmt.Printf("%s\n", repo.nameWithOwner)
 
-		err := listLanguages(repo.langs, sortKey, sortDirection, unit)
+		err := listLanguages(repo.langs, sortKey, sortOrder, unit)
 		if err != nil {
 			return err
 		}
@@ -28,11 +28,11 @@ func listReposWithLanguages(repos []repoEntry, sortKey string, sortDirection str
 	return nil
 }
 
-func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit string) error {
+func listLanguages(langs []langEntry, sortKey string, sortOrder string, unit string) error {
 	var sortFunc func(a, b int) bool
 	switch sortKey {
 	case "name":
-		switch sortDirection {
+		switch sortOrder {
 		case "asc":
 			sortFunc = func(a, b int) bool {
 				return strings.Compare(langs[a].name, langs[b].name) < 0
@@ -42,10 +42,10 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 				return strings.Compare(langs[a].name, langs[b].name) > 0
 			}
 		default:
-			return fmt.Errorf("listLanguages(): unknown sort direction %q in listLanguages()", sortDirection)
+			return fmt.Errorf("listLanguages(): unknown sort order %q in listLanguages()", sortOrder)
 		}
 	case "size":
-		switch sortDirection {
+		switch sortOrder {
 		case "asc":
 			sortFunc = func(a, b int) bool {
 				return langs[a].size < langs[b].size
@@ -55,7 +55,7 @@ func listLanguages(langs []langEntry, sortKey string, sortDirection string, unit
 				return langs[a].size > langs[b].size
 			}
 		default:
-			return fmt.Errorf("listLanguages(): unknown sort direction %q in listLanguages()", sortDirection)
+			return fmt.Errorf("listLanguages(): unknown sort order %q in listLanguages()", sortOrder)
 		}
 	case "":
 		sortFunc = nil

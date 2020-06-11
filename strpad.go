@@ -20,7 +20,7 @@ func Strrpad(str string, padLen int) string {
 	return result
 }
 
-func strpad(str string, padLen int, padDirection string) (string, error) {
+func strpad(str string, padLen int, padSide string) (string, error) {
 	if padLen <= len(str) {
 		return str, nil
 	}
@@ -33,13 +33,13 @@ func strpad(str string, padLen int, padDirection string) (string, error) {
 
 	// append spaces to the input string
 	bytes := []byte(str)
-	switch padDirection {
+	switch padSide {
 	case "left":
 		bytes = append(whitespace, bytes...)
 	case "right":
 		bytes = append(bytes, whitespace...)
 	default:
-		return str, fmt.Errorf("strpad(): unknown pad direction %q", padDirection)
+		return str, fmt.Errorf("strpad(): unknown pad direction %q", padSide)
 	}
 
 	return string(bytes), nil

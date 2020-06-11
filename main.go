@@ -11,11 +11,11 @@ var execName = "ghlangs"
 
 // input parameters
 var (
-	showHelp      bool
-	format        string
-	sortKey       string
-	sortDirection string
-	unit          string
+	showHelp  bool
+	format    string
+	sortKey   string
+	sortOrder string
+	unit      string
 )
 
 // init is used here to define input parameters before the execution starts
@@ -23,7 +23,7 @@ func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(
 			os.Stderr,
-			"Usage: %s [-format FORMAT] [-sort-by KEY] [-sort-dir DIRECTION]\n",
+			"Usage: %s [-format FORMAT] [-sort-by KEY] [-sort-order ORDER]\n",
 			execName,
 		)
 		flag.PrintDefaults()
@@ -33,7 +33,7 @@ func init() {
 	flag.BoolVar(&showHelp, "h", false, "show help (shorthand)")
 	flag.StringVar(&format, "format", "total", "(detail|total) display format")
 	flag.StringVar(&sortKey, "sort-by", "size", "(name|size) sort key for sorting languages")
-	flag.StringVar(&sortDirection, "sort-dir", "desc", "(asc|desc) sort direction for sorting languages")
+	flag.StringVar(&sortOrder, "sort-order", "desc", "(asc|desc) sort order for sorting languages")
 	flag.StringVar(&unit, "unit", "auto", "(auto|B|kB|MB|GB|TB|PB|EB) unit used for displaying sizes")
 }
 
@@ -52,11 +52,11 @@ func validateFlags() error {
 		return fmt.Errorf("unknown sort key %q", sortKey)
 	}
 
-	switch sortDirection {
+	switch sortOrder {
 	case "asc":
 	case "desc":
 	default:
-		return fmt.Errorf("unknown sort direction %q", sortDirection)
+		return fmt.Errorf("unknown sort order %q", sortOrder)
 	}
 
 	switch unit {
@@ -107,14 +107,14 @@ func main() {
 	langs := getLanguagesFromRepos(repos)
 	switch format {
 	case "detail":
-		err = listReposWithLanguages(repos, sortKey, sortDirection, unit)
+		err = listReposWithLanguages(repos, sortKey, sortOrder, unit)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			return
 		}
 	case "total":
 		fmt.Println("All repositories:")
-		err = listLanguages(langs, sortKey, sortDirection, unit)
+		err = listLanguages(langs, sortKey, sortOrder, unit)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 			return
