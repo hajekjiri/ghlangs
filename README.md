@@ -102,4 +102,3 @@ All repositories:
 
 ## Used external modules
 * [shurcooL/githubv4](https://github.com/shurcooL/githubv4) is licensed under the [MIT license](https://github.com/shurcooL/githubv4/blob/master/LICENSE)
-* [golang/oauth2](https://github.com/golang/oauth2) is licensed under the [BSD 3-Clause license](https://github.com/golang/oauth2/blob/master/LICENSE)
