@@ -50,7 +50,7 @@ Usage: ghlangs [-format FORMAT] [-sort-by KEY] [-sort-order ORDER]
     	(auto|B|kB|MB|GB|TB|PB|EB) unit used for displaying sizes (default "auto")
 ```
 
-## Examples
+#### Examples
 Display details for each repository, sort languages by name in ascending order and use bytes for displaying sizes. I skipped some repositories in this output to keep it short.
 ```
 $ ghlangs -format=detail -sort-by=name -sort-order=asc -unit=B
@@ -84,7 +84,7 @@ hajekjiri/pacman
 
 ```
 # equivalent to running ghlangs without parameters
-$ ./ghlangs -format=total -sort-by=size -sort-order=desc -unit=auto
+$ ghlangs -format=total -sort-by=size -sort-order=desc -unit=auto
 Progress: 8/8 repositories (API Rate Limit 3/5000)
 All repositories:
 -------------------------------
