@@ -19,16 +19,16 @@ type getSizeAutoMock struct {
 	ok   bool
 }
 
-var validUnits []string = []string{
+var validUnits = []string{
 	"auto", "B", "kB", "MB", "GB", "TB", "PB", "EB"}
 
-var invalidUnits []string = []string{
+var invalidUnits = []string{
 	"YB", "BYTE", "hello", "go"}
 
-var sizesLtZero []int = []int{
+var sizesLtZero = []int{
 	-1, -100, -999, -1000, -1001, -4500, -149386, -1647583927}
 
-var sizeGtZeroData []getSizeByUnitMock = []getSizeByUnitMock{
+var sizeGtZeroData = []getSizeByUnitMock{
 	{100, "auto", fmt.Sprintf("%.3f  B", 100*math.Pow10(0)), true},
 	{100, "B", fmt.Sprintf("%.3f  B", 100*math.Pow10(0)), true},
 	{100, "kB", fmt.Sprintf("%.3f kB", 100*math.Pow10(-3)), true},
