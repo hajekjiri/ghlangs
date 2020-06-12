@@ -51,7 +51,7 @@ Usage: ghlangs [-format FORMAT] [-sort-by KEY] [-sort-order ORDER]
 ```
 
 #### Examples
-Display details for each repository, sort languages by name in ascending order and use bytes for displaying sizes. I skipped some repositories in this output to keep it short.
+Display details for each repository, sort languages by name in ascending order, and use bytes for displaying sizes. I skipped some repositories in this output to keep it short.
 ```
 $ ghlangs -format=detail -sort-by=name -sort-order=asc -unit=B
 Progress: 8/8 repositories (API Rate Limit 2/5000)
@@ -82,6 +82,7 @@ hajekjiri/pacman
 ...
 ```
 
+Display the total size of code for each language across all of your repositories, sort languages by size in descending order, and automatically select the most suitable unit for each size entry.
 ```
 # equivalent to running ghlangs without parameters
 $ ghlangs -format=total -sort-by=size -sort-order=desc -unit=auto
