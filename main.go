@@ -38,24 +38,15 @@ func init() {
 }
 
 func validateFlags() error {
-	switch format {
-	case "detail":
-	case "total":
-	default:
+	if format != "detail" && format != "total" {
 		return fmt.Errorf("unknown display format %q", format)
 	}
 
-	switch sortKey {
-	case "name":
-	case "size":
-	default:
+	if sortKey != "name" && sortKey != "size" {
 		return fmt.Errorf("unknown sort key %q", sortKey)
 	}
 
-	switch sortOrder {
-	case "asc":
-	case "desc":
-	default:
+	if sortOrder != "asc" && sortOrder != "desc" {
 		return fmt.Errorf("unknown sort order %q", sortOrder)
 	}
 
