@@ -4,44 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/shurcooL/githubv4"
+	"strconv"
 )
 
-func getRepos(client *githubv4.Client) ([]repoEntry, error) {
-	var query struct {
-		Viewer struct {
-			Repositories struct {
-				TotalCount int
-				Nodes      []struct {
-					NameWithOwner string
-					Languages     struct {
-						Edges []struct {
-							Node struct {
-								Name string
-							}
-							Size int
-						}
-					} `graphql:"languages(first : 100)"`
-				}
-				PageInfo struct {
-					StartCursor string
-					EndCursor   string
-					HasNextPage bool
-				}
-			} `graphql:"repositories(first: 100, affiliations: OWNER, after: $after)"`
-		}
-		RateLimit struct {
-			Limit     int
-			Cost      int
-			Remaining int
-			ResetAt   string
-		}
-	}
-
+func getViewerRepos(client *githubv4.Client) ([]repoEntry, error) {
+	query := viewerReposQuery{}
 	repos := []repoEntry{}
 	var offset *string = nil
-	progress := 0
-	query.Viewer.Repositories.PageInfo.HasNextPage = true
-	for query.Viewer.Repositories.PageInfo.HasNextPage {
+	for {
 		params := map[string]interface{}{
 			"after": (*githubv4.String)(offset),
 		}
@@ -50,27 +20,101 @@ func getRepos(client *githubv4.Client) ([]repoEntry, error) {
 			return []repoEntry{}, err
 		}
 
-		for _, repo := range query.Viewer.Repositories.Nodes {
-			e := repoEntry{
-				nameWithOwner: repo.NameWithOwner,
-				langs:         []langEntry{},
-			}
-			for _, lang := range repo.Languages.Edges {
-				e.langs = append(e.langs, langEntry{lang.Node.Name, lang.Size})
-			}
-			repos = append(repos, e)
+		newRepos := extractReposFromQuery(query)
+		repos = append(repos, newRepos...)
+
+		queryRepos := query.GetRepositories()
+		offset = &queryRepos.PageInfo.EndCursor
+		rateLimit := query.GetRateLimit()
+
+		progressPad := len(strconv.Itoa(queryRepos.TotalCount))
+		fmt.Printf(
+			"Progress: %s/%d repositories (API Rate Limit %d/%d)\n",
+			Strlpad(strconv.Itoa(len(repos)), progressPad),
+			queryRepos.TotalCount,
+			rateLimit.Limit-rateLimit.Remaining,
+			rateLimit.Limit,
+		)
+
+		if !queryRepos.PageInfo.HasNextPage {
+			break
+		}
+	}
+
+	return repos, nil
+}
+
+func getUserRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
+	query := userReposQuery{}
+	repos := []repoEntry{}
+	var offset *string = nil
+	for {
+		params := map[string]interface{}{
+			"after": (*githubv4.String)(offset),
+			"login": githubv4.String(login),
+		}
+		err := client.Query(context.Background(), &query, params)
+		if err != nil {
+			return []repoEntry{}, err
 		}
 
-		progress += len(query.Viewer.Repositories.Nodes)
-		offset = &query.Viewer.Repositories.PageInfo.EndCursor
+		newRepos := extractReposFromQuery(query)
+		repos = append(repos, newRepos...)
 
+		queryRepos := query.GetRepositories()
+		offset = &queryRepos.PageInfo.EndCursor
+		rateLimit := query.GetRateLimit()
+
+		progressPad := len(strconv.Itoa(queryRepos.TotalCount))
 		fmt.Printf(
-			"Progress: %d/%d repositories (API Rate Limit %d/%d)\n",
-			progress,
-			query.Viewer.Repositories.TotalCount,
-			query.RateLimit.Limit-query.RateLimit.Remaining,
-			query.RateLimit.Limit,
+			"Progress: %s/%d repositories (API Rate Limit %d/%d)\n",
+			Strlpad(strconv.Itoa(len(repos)), progressPad),
+			queryRepos.TotalCount,
+			rateLimit.Limit-rateLimit.Remaining,
+			rateLimit.Limit,
 		)
+
+		if !queryRepos.PageInfo.HasNextPage {
+			break
+		}
+	}
+
+	return repos, nil
+}
+
+func getOrgRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
+	query := orgReposQuery{}
+	repos := []repoEntry{}
+	var offset *string = nil
+	for {
+		params := map[string]interface{}{
+			"after": (*githubv4.String)(offset),
+			"login": githubv4.String(login),
+		}
+		err := client.Query(context.Background(), &query, params)
+		if err != nil {
+			return []repoEntry{}, err
+		}
+
+		newRepos := extractReposFromQuery(query)
+		repos = append(repos, newRepos...)
+
+		queryRepos := query.GetRepositories()
+		offset = &queryRepos.PageInfo.EndCursor
+		rateLimit := query.GetRateLimit()
+
+		progressPad := len(strconv.Itoa(queryRepos.TotalCount))
+		fmt.Printf(
+			"Progress: %s/%d repositories (API Rate Limit %d/%d)\n",
+			Strlpad(strconv.Itoa(len(repos)), progressPad),
+			queryRepos.TotalCount,
+			rateLimit.Limit-rateLimit.Remaining,
+			rateLimit.Limit,
+		)
+
+		if !queryRepos.PageInfo.HasNextPage {
+			break
+		}
 	}
 
 	return repos, nil

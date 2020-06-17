@@ -15,3 +15,25 @@ func getLanguagesFromRepos(repos []repoEntry) []langEntry {
 
 	return langSlice
 }
+
+type reposQuery interface {
+	GetRepositories() repoResult
+	GetRateLimit() rateLimitResult
+}
+
+func extractReposFromQuery(q reposQuery) []repoEntry {
+	repos := []repoEntry{}
+	queryRepos := q.GetRepositories()
+	for _, repo := range queryRepos.Nodes {
+		e := repoEntry{
+			nameWithOwner: repo.NameWithOwner,
+			langs:         []langEntry{},
+		}
+		for _, lang := range repo.Languages.Edges {
+			e.langs = append(e.langs, langEntry{lang.Node.Name, lang.Size})
+		}
+		repos = append(repos, e)
+	}
+
+	return repos
+}
