@@ -87,30 +87,29 @@ func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit str
 		return err
 	}
 	maxNameLen := len(totalSizeLabel)
-	maxSizeLen := len(totalSizeString)
+	maxSizeLen := 11
 	for _, lang := range langs {
 		if len(lang.name) > maxNameLen {
 			maxNameLen = len(lang.name)
 		}
 
-		langSize, err := GetSizeByUnit(lang.size, unit)
-		if err != nil {
-			return err
-		}
-		langSizeLen := len(langSize)
-		if langSizeLen > maxSizeLen {
-			maxSizeLen = langSizeLen
-		}
 	}
 
-	dashes := make([]byte, len(totalSizeLabel)+maxSizeLen+11)
+	var leftColPad int
+	if maxNameLen > len(totalSizeLabel) {
+		leftColPad = maxNameLen
+	} else {
+		leftColPad = len(totalSizeLabel)
+	}
+
+	dashes := make([]byte, leftColPad+maxSizeLen+11)
 	for i := range dashes {
 		dashes[i] = '-'
 	}
 	dashesStr := string(dashes)
 
 	fmt.Println(dashesStr)
-	fmt.Printf("|%s|%s|100.00%%|\n", totalSizeLabel, Strlpad(totalSizeString, maxSizeLen))
+	fmt.Printf("|%s|%s|100.00%%|\n", Strrpad(totalSizeLabel, leftColPad), Strlpad(totalSizeString, maxSizeLen))
 	fmt.Println(dashesStr)
 
 	for _, lang := range langs {
@@ -122,7 +121,7 @@ func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit str
 
 		fmt.Printf(
 			"|%s|%s|%s%%|\n",
-			Strrpad(lang.name, maxNameLen),
+			Strrpad(lang.name, leftColPad),
 			Strlpad(sizeWithUnit, maxSizeLen),
 			Strlpad(fmt.Sprintf("%.2f", relativeSize), len("100.00")),
 		)
