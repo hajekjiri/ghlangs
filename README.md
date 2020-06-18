@@ -27,7 +27,7 @@ go build
 Run `ghlangs -h` or `ghlangs -help` to display a short description of the parameters.
 ```
 $ ghlangs -help
-Usage: ghlangs [-format FORMAT] [-sort-by KEY] [-sort-order ORDER]
+Usage: ghlangs [-user USER] [-org ORGANIZATION] [-format FORMAT] [-sort-by KEY] [-sort-order ORDER] [-unit UNIT]
   -format string
     	(detail|total) display format (default "total")
   -h	show help (shorthand)

@@ -25,7 +25,7 @@ func init() {
 	flag.Usage = func() {
 		fmt.Fprintf(
 			os.Stderr,
-			"Usage: %s [-format FORMAT] [-sort-by KEY] [-sort-order ORDER]\n",
+			"Usage: %s [-user USER] [-org ORGANIZATION] [-format FORMAT] [-sort-by KEY] [-sort-order ORDER] [-unit UNIT]\n",
 			execName,
 		)
 		flag.PrintDefaults()
