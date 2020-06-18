@@ -37,8 +37,8 @@ func init() {
 	flag.StringVar(&sortKey, "sort-by", "size", "(name|size) sort key for sorting languages")
 	flag.StringVar(&sortOrder, "sort-order", "desc", "(asc|desc) sort order for sorting languages")
 	flag.StringVar(&unit, "unit", "auto", "(auto|B|kB|MB|GB|TB|PB|EB) unit used for displaying sizes")
-	flag.StringVar(&org, "org", "", "Login of the organization whose repositories you want to query. Cannot combine with \"-user\".")
-	flag.StringVar(&user, "user", "", "Login of the user whose repositories you want to query. Cannot combine with \"-org\".")
+	flag.StringVar(&org, "org", "", "login of the organization whose repositories you want to query, cannot combine with \"-user\"")
+	flag.StringVar(&user, "user", "", "login of the user whose repositories you want to query, cannot combine with \"-org\"")
 }
 
 func validateFlags() error {

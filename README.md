@@ -34,7 +34,7 @@ Usage: ghlangs [-user USER] [-org ORGANIZATION] [-format FORMAT] [-sort-by KEY] 
   -help
     	show help
   -org string
-    	Login of the organization whose repositories you want to query. Cannot combine with "-user".
+    	login of the organization whose repositories you want to query, cannot combine with "-user"
   -sort-by string
     	(name|size) sort key for sorting languages (default "size")
   -sort-order string
@@ -42,7 +42,7 @@ Usage: ghlangs [-user USER] [-org ORGANIZATION] [-format FORMAT] [-sort-by KEY] 
   -unit string
     	(auto|B|kB|MB|GB|TB|PB|EB) unit used for displaying sizes (default "auto")
   -user string
-    	Login of the user whose repositories you want to query. Cannot combine with "-org".
+    	login of the user whose repositories you want to query, cannot combine with "-org"
 ```
 
 Use `-key VALUE` or `-key=VALUE` to pass arguments. Both of these syntaxes are acceptable.
