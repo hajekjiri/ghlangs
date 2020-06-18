@@ -33,12 +33,16 @@ Usage: ghlangs [-format FORMAT] [-sort-by KEY] [-sort-order ORDER]
   -h	show help (shorthand)
   -help
     	show help
+  -org string
+    	Login of the organization whose repositories you want to query. Cannot combine with "-user".
   -sort-by string
     	(name|size) sort key for sorting languages (default "size")
   -sort-order string
     	(asc|desc) sort order for sorting languages (default "desc")
   -unit string
     	(auto|B|kB|MB|GB|TB|PB|EB) unit used for displaying sizes (default "auto")
+  -user string
+    	Login of the user whose repositories you want to query. Cannot combine with "-org".
 ```
 
 Use `-key VALUE` or `-key=VALUE` to pass arguments. Both of these syntaxes are acceptable.
