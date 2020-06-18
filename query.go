@@ -29,10 +29,10 @@ func getViewerRepos(client *githubv4.Client) ([]repoEntry, error) {
 
 		progressPad := len(strconv.Itoa(queryRepos.TotalCount))
 		fmt.Printf(
-			"Progress: %s/%d repositories (API Rate Limit %d/%d)\n",
+			"Progress: %s/%d repositories (API Rate Limit %s/%d)\n",
 			Strlpad(strconv.Itoa(len(repos)), progressPad),
 			queryRepos.TotalCount,
-			rateLimit.Limit-rateLimit.Remaining,
+			Strlpad(strconv.Itoa(rateLimit.Limit-rateLimit.Remaining), 4),
 			rateLimit.Limit,
 		)
 
@@ -67,10 +67,10 @@ func getUserRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
 
 		progressPad := len(strconv.Itoa(queryRepos.TotalCount))
 		fmt.Printf(
-			"Progress: %s/%d repositories (API Rate Limit %d/%d)\n",
+			"Progress: %s/%d repositories (API Rate Limit %s/%d)\n",
 			Strlpad(strconv.Itoa(len(repos)), progressPad),
 			queryRepos.TotalCount,
-			rateLimit.Limit-rateLimit.Remaining,
+			Strlpad(strconv.Itoa(rateLimit.Limit-rateLimit.Remaining), 4),
 			rateLimit.Limit,
 		)
 
@@ -105,10 +105,10 @@ func getOrgRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
 
 		progressPad := len(strconv.Itoa(queryRepos.TotalCount))
 		fmt.Printf(
-			"Progress: %s/%d repositories (API Rate Limit %d/%d)\n",
+			"Progress: %s/%d repositories (API Rate Limit %s/%d)\n",
 			Strlpad(strconv.Itoa(len(repos)), progressPad),
 			queryRepos.TotalCount,
-			rateLimit.Limit-rateLimit.Remaining,
+			Strlpad(strconv.Itoa(rateLimit.Limit-rateLimit.Remaining), 4),
 			rateLimit.Limit,
 		)
 
