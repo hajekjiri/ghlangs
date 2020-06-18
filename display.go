@@ -44,11 +44,11 @@ func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit str
 		switch sortOrder {
 		case "asc":
 			sortFunc = func(a, b int) bool {
-				return strings.Compare(langs[a].name, langs[b].name) < 0
+				return strings.Compare(strings.ToLower(langs[a].name), strings.ToLower(langs[b].name)) < 0
 			}
 		case "desc":
 			sortFunc = func(a, b int) bool {
-				return strings.Compare(langs[a].name, langs[b].name) > 0
+				return strings.Compare(strings.ToLower(langs[a].name), strings.ToLower(langs[b].name)) > 0
 			}
 		default:
 			return fmt.Errorf("ListLanguages(): unknown sort order %q", sortOrder)
