@@ -87,10 +87,19 @@ func ListLanguages(langs []langEntry, sortKey string, sortOrder string, unit str
 		return err
 	}
 	maxNameLen := len(totalSizeLabel)
-	maxSizeLen := 11
+	maxSizeLen := len(totalSizeString)
 	for _, lang := range langs {
 		if len(lang.name) > maxNameLen {
 			maxNameLen = len(lang.name)
+		}
+
+		langSize, err := GetSizeByUnit(lang.size, unit)
+		if err != nil {
+			return err
+		}
+		langSizeLen := len(langSize)
+		if langSizeLen > maxSizeLen {
+			maxSizeLen = langSizeLen
 		}
 
 	}
