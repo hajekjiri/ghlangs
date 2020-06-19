@@ -82,7 +82,7 @@ ghlangs -org=ORGANIZATION
 Display details for each repository owned by viewer, sort languages by name in ascending order, and use bytes for displaying sizes.
 ```
 $ ghlangs -format=detail -sort-by=name -sort-order=asc -unit=B
-Progress: 8/8 repositories (API Rate Limit   84/5000)
+Progress: 7/7 repositories (API Rate Limit   84/5000)
 hajekjiri/duckshooter-vr
 ---------------------------------
 |Total size|45253.000  B|100.00%|
