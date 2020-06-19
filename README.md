@@ -358,4 +358,4 @@ All repositories:
 ```
 
 ## Used external modules
-* [shurcooL/githubv4](https://github.com/shurcooL/githubv4) is licensed under the [MIT license](https://github.com/shurcooL/githubv4/blob/master/LICENSE)
+* [shurcooL/graphql](https://github.com/shurcooL/graphql) is licensed under the [MIT license](https://github.com/shurcooL/graphql/blob/master/LICENSE)

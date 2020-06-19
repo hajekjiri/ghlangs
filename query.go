@@ -3,17 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/shurcooL/githubv4"
+	"github.com/shurcooL/graphql"
 	"strconv"
 )
 
-func getViewerRepos(client *githubv4.Client) ([]repoEntry, error) {
+func getViewerRepos(client *graphql.Client) ([]repoEntry, error) {
 	query := viewerReposQuery{}
 	repos := []repoEntry{}
 	var offset *string = nil
 	for {
 		params := map[string]interface{}{
-			"after": (*githubv4.String)(offset),
+			"after": (*graphql.String)(offset),
 		}
 		err := client.Query(context.Background(), &query, params)
 		if err != nil {
@@ -44,14 +44,14 @@ func getViewerRepos(client *githubv4.Client) ([]repoEntry, error) {
 	return repos, nil
 }
 
-func getUserRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
+func getUserRepos(client *graphql.Client, login string) ([]repoEntry, error) {
 	query := userReposQuery{}
 	repos := []repoEntry{}
 	var offset *string = nil
 	for {
 		params := map[string]interface{}{
-			"after": (*githubv4.String)(offset),
-			"login": githubv4.String(login),
+			"after": (*graphql.String)(offset),
+			"login": graphql.String(login),
 		}
 		err := client.Query(context.Background(), &query, params)
 		if err != nil {
@@ -82,14 +82,14 @@ func getUserRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
 	return repos, nil
 }
 
-func getOrgRepos(client *githubv4.Client, login string) ([]repoEntry, error) {
+func getOrgRepos(client *graphql.Client, login string) ([]repoEntry, error) {
 	query := orgReposQuery{}
 	repos := []repoEntry{}
 	var offset *string = nil
 	for {
 		params := map[string]interface{}{
-			"after": (*githubv4.String)(offset),
-			"login": githubv4.String(login),
+			"after": (*graphql.String)(offset),
+			"login": graphql.String(login),
 		}
 		err := client.Query(context.Background(), &query, params)
 		if err != nil {
