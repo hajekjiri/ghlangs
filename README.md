@@ -63,7 +63,6 @@ You can run `ghlangs` on 3 kinds of targets, no more than 1 target at a time.
 ##### Viewer
 Displays viewer's repositories. Viewer is the owner of the provided API token. Counts private repositories if the provided API token has access to the _repo_ scope. This is the default target.
 ```
-# Display data from repos owned by the API token owner
 ghlangs
 ```
 
