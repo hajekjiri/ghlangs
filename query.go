@@ -10,7 +10,7 @@ import (
 func getViewerRepos(client *graphql.Client) ([]repoEntry, error) {
 	query := viewerReposQuery{}
 	repos := []repoEntry{}
-	var offset *string = nil
+	var offset *string
 	for {
 		params := map[string]interface{}{
 			"after": (*graphql.String)(offset),
@@ -47,7 +47,7 @@ func getViewerRepos(client *graphql.Client) ([]repoEntry, error) {
 func getUserRepos(client *graphql.Client, login string) ([]repoEntry, error) {
 	query := userReposQuery{}
 	repos := []repoEntry{}
-	var offset *string = nil
+	var offset *string
 	for {
 		params := map[string]interface{}{
 			"after": (*graphql.String)(offset),
@@ -85,7 +85,7 @@ func getUserRepos(client *graphql.Client, login string) ([]repoEntry, error) {
 func getOrgRepos(client *graphql.Client, login string) ([]repoEntry, error) {
 	query := orgReposQuery{}
 	repos := []repoEntry{}
-	var offset *string = nil
+	var offset *string
 	for {
 		params := map[string]interface{}{
 			"after": (*graphql.String)(offset),
