@@ -1,6 +1,6 @@
 # Ghlangs
 ## About
-Ghlangs is a command-line tool utilizing the [GitHub GraphQL API v4](https://developer.github.com/v4/) to tell you what programming languages are dominant in any user's or oganization's GitHub repositories. You can either view a short summary for each repository or display the total amount of code written in each language across all repositories. Only counts repositories that the target user/organization owns and that are not forks.
+Ghlangs is a command-line tool utilizing the [GitHub GraphQL API v4](https://developer.github.com/v4/) to tell you what programming languages are dominant in any user's or oganization's GitHub repositories. You can either view a short summary for each repository or display the total amount of code written in each language across all repositories. Only includes repositories that the target user/organization owns and that are not forks.
 
 ## Getting started
 ### 1. GitHub API token
@@ -61,19 +61,19 @@ ghlangs -format=total -sort-by=size -sort-order=desc -unit=auto
 You can run `ghlangs` on 3 kinds of targets, no more than 1 target at a time.
 
 ##### Viewer
-Displays viewer's repositories. Viewer is the owner of the provided API token. Counts private repositories if the provided API token has access to the _repo_ scope. This is the default target.
+Displays viewer's repositories. Viewer is the owner of the provided API token. Includes private repositories if the provided API token has access to the _repo_ scope. This is the default target.
 ```
 ghlangs
 ```
 
 ##### User
-You can run `ghlangs` on any GitHub user by passing their login with the `-user` parameter. Counts private repositories if the viewer has access to them and the token has access to the _repo_ scope.
+You can run `ghlangs` on any GitHub user by passing their login with the `-user` parameter. Includes private repositories if the viewer has access to them and the token has access to the _repo_ scope.
 ```
 ghlangs -user=USER
 ```
 
 ##### Organization
-You can run `ghlangs` on any GitHub organization by passing its login with the `-org` parameter. Counts private repositories if the viewer has access to them and the token has access to the _repo_ scope.
+You can run `ghlangs` on any GitHub organization by passing its login with the `-org` parameter. Includes private repositories if the viewer has access to them and the token has access to the _repo_ scope.
 ```
 ghlangs -org=ORGANIZATION
 ```
