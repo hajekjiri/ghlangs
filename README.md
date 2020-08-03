@@ -1,6 +1,6 @@
 # Ghlangs
 ## About
-Ghlangs is a command-line tool utilizing the [GitHub GraphQL API v4](https://developer.github.com/v4/) to tell you what programming languages are dominant in any user's or oganization's GitHub repositories. You can either view a short summary for each repository or display the total amount of code written in each language across all repositories. Only includes repositories that the target user/organization owns and that are not forks.
+Ghlangs is a command-line tool utilizing the [GitHub GraphQL API v4](https://docs.github.com/en/graphql) to tell you what programming languages are dominant in any user's or oganization's GitHub repositories. You can either view a short summary for each repository or display the total amount of code written in each language across all repositories. Only includes repositories that the target user/organization owns and that are not forks.
 
 ## Getting started
 ### 1. GitHub API token
